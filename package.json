@@ -1,0 +1,71 @@
+{
+  "name": "inventaris-madrasah",
+  "version": "0.14.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build --webpack",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src tests/*.ts",
+    "test": "node --conditions=react-server --import tsx --test --test-concurrency=2 tests/*.test.ts",
+    "test:database": "node tests/database.test.mjs",
+    "test:e2e:smoke": "node tests/e2e/smoke.mjs",
+    "deploy:check-env": "node scripts/deploy/check-env.mjs",
+    "deploy:check-db": "node scripts/deploy/check-database.mjs",
+    "test:deployment": "node --test scripts/deploy/check-env.test.mjs",
+    "operator:bootstrap": "node --conditions=react-server --import tsx scripts/bootstrap-operator.ts",
+    "docs:check": "python3 scripts/check_docs.py"
+  },
+  "dependencies": {
+    "@pdf-lib/fontkit": "^1.1.1",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@zxing/browser": "^0.2.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "exceljs": "4.4.0",
+    "google-auth-library": "^11.3.1",
+    "lucide-react": "^0.577.0",
+    "next": "16.4.2",
+    "pdf-lib": "^1.17.1",
+    "pg": "8.23.1",
+    "qrcode": "^1.5.4",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "server-only": "0.0.1",
+    "spark-md5": "^3.0.2",
+    "tailwind-merge": "^3.5.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.10",
+    "@next/eslint-plugin-next": "16.4.2",
+    "@sparticuz/chromium": "148.0.0",
+    "@tailwindcss/postcss": "^4.2.1",
+    "@types/node": "^24.0.0",
+    "@types/pg": "^8.15.0",
+    "@types/pngjs": "^6.0.5",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/spark-md5": "^3.0.5",
+    "eslint": "10.12.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "jsqr": "^1.4.0",
+    "playwright-core": "1.58.2",
+    "pngjs": "^7.0.0",
+    "tailwindcss": "^4.2.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "8.71.2"
+  },
+  "overrides": {
+    "exceljs": {
+      "uuid": "11.1.1"
+    }
+  }
+}
