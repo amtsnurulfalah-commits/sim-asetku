@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Apply ordered migrations to an explicit target, with checksums and no destructive reset.
-Requires psycopg (v3) or psycopg2. DATABASE_URL is read only from environment.
+Requires psycopg (v3) or psycopg2. Target must be explicit MIGRATION_DATABASE_URL.
 """
 import os,hashlib
 from pathlib import Path
+url=os.environ.get('MIGRATION_DATABASE_URL')
+if not url:raise SystemExit('Set MIGRATION_DATABASE_URL explicitly; DATABASE_URL is not a migration target.')
 try:import psycopg as pg
 except ImportError:import psycopg2 as pg
-url=os.environ.get('MIGRATION_DATABASE_URL') or os.environ.get('DATABASE_URL')
-if not url:raise SystemExit('Set MIGRATION_DATABASE_URL for the intended sandbox/staging target.')
 c=pg.connect(url);c.autocommit=True
 try:
  with c.cursor() as q:

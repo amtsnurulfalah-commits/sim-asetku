@@ -4,7 +4,7 @@ from pathlib import Path
 root=Path(__file__).resolve().parents[1]
 docs=root/'docs/tahap-14'
 errors=[];checked=0
-for f in [root/'README.md',root/'docs/STATUS-PENERIMAAN.md',*sorted(docs.glob('*.md'))]:
+for f in [root/'README.md',root/'docs/STATUS-PENERIMAAN.md',*sorted(docs.glob('*.md')),*sorted((root/'docs/audit').glob('*.md'))]:
  for link in re.findall(r'\[[^\]]*\]\(([^)]+)\)',f.read_text()):
   if '://' in link or link.startswith('#'):continue
   target=link.split('#',1)[0]
@@ -17,6 +17,6 @@ for x in catalog:
  if actual.get(x['source'])!=x['methods']:errors.append('Method mismatch: '+x['source'])
 for f,sha in json.loads((docs/'source-manifest.json').read_text()).items():
  if hashlib.sha256((root/f).read_bytes()).hexdigest()!=sha:errors.append('Source changed: '+f)
-result={'status':'FAIL' if errors else 'PASS','route_count':len(actual),'page_count':len(list((root/'src/app').rglob('page.tsx'))),'markdown_files':len(list(docs.glob('*.md')))+2,'local_links_checked':checked,'errors':errors}
+result={'status':'FAIL' if errors else 'PASS','route_count':len(actual),'page_count':len(list((root/'src/app').rglob('page.tsx'))),'markdown_files':len(list(docs.glob('*.md')))+len(list((root/'docs/audit').glob('*.md')))+2,'local_links_checked':checked,'errors':errors}
 print(json.dumps(result,indent=2))
 raise SystemExit(bool(errors))
