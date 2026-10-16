@@ -1,0 +1,51 @@
+@import "tailwindcss";
+@theme {
+  --font-sans: Arial, Helvetica, sans-serif;
+}
+:root {
+  color-scheme: light;
+}
+body {
+  margin: 0;
+  background: #f7f9f8;
+  color: #172b2b;
+  font-family: Arial, Helvetica, sans-serif;
+}
+button,
+input {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+.field {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: white;
+  padding: 14px 16px;
+  color: #0f172a;
+  outline: none;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.field:focus {
+  border-color: #0f766e;
+  box-shadow: 0 0 0 3px #0f766e18;
+}
+.field:disabled {
+  background: #f1f5f9;
+}
+a:focus-visible {
+  outline: 2px solid #0f766e;
+  outline-offset: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
