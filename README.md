@@ -1,4 +1,6 @@
-# Inventaris Madrasah/Sekolah — 0.14.0
+# Inventaris Madrasah/Sekolah — 0.14.1
+
+Rilis audit/perbaikan: [laporan temuan dan bukti penghapusan](docs/audit/Laporan-Audit.md). Sembilan kelompok bug diperbaiki, 320 tes aplikasi lulus; penerimaan produksi tetap terbuka. Dokumentasi Tahap 14 di bawah adalah baseline 0.14.0, dengan manifest aktif diperbarui untuk perbaikan ini.
 
 Aplikasi inventaris multi-tenant berbasis Next.js/TypeScript, Central SSO untuk identitas, Supabase PostgreSQL untuk data/otorisasi lokal, serta Google Drive untuk bytes file. Supabase Auth dan Supabase Storage tidak digunakan.
 
@@ -35,6 +37,9 @@ Isi .env.local melalui mekanisme lokal yang aman sebelum menguji login/fitur bis
 | npm run test:deployment | Validator environment dengan fixture statis |
 | npm run test:e2e:smoke | Browser anonim/fail-closed setelah build |
 | npm run typecheck / npm run lint | TypeScript dan ESLint |
+| npm run test:components | Dua fixture browser laporan, API tiruan |
+| npm run test:migration-target | Guard target migrasi, tanpa database |
+| npm run audit:deadcode | Inventaris entry point, impor dan export |
 | npm run docs:check | Tautan dokumentasi, cakupan route dan manifest sumber |
 | npm run deploy:check-env | Format environment runtime, tanpa mencetak nilai secret |
 | npm run deploy:check-db | Probe read-only TLS/role/schema ke target yang dikonfigurasi |

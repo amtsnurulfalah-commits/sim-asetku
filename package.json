@@ -1,6 +1,6 @@
 {
   "name": "inventaris-madrasah",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "private": true,
   "type": "module",
   "engines": {
@@ -19,7 +19,10 @@
     "deploy:check-db": "node scripts/deploy/check-database.mjs",
     "test:deployment": "node --test scripts/deploy/check-env.test.mjs",
     "operator:bootstrap": "node --conditions=react-server --import tsx scripts/bootstrap-operator.ts",
-    "docs:check": "python3 scripts/check_docs.py"
+    "docs:check": "python3 scripts/check_docs.py",
+    "test:components": "node tests/e2e/components.mjs",
+    "test:migration-target": "python3 tests/migration_target.test.py",
+    "audit:deadcode": "node scripts/check_reachability.cjs"
   },
   "dependencies": {
     "@pdf-lib/fontkit": "^1.1.1",
@@ -61,7 +64,8 @@
     "tailwindcss": "^4.2.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "8.71.2"
+    "typescript-eslint": "8.71.2",
+    "esbuild": "0.28.2"
   },
   "overrides": {
     "exceljs": {
