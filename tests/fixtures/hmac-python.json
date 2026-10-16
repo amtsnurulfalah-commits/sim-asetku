@@ -1,0 +1,12 @@
+{
+  "test_key_public": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "payload": {
+    "username": "guru.satu",
+    "password": "  Sandi é 😀  "
+  },
+  "payload_encoded": "eyJ1c2VybmFtZSI6Imd1cnUuc2F0dSIsInBhc3N3b3JkIjoiICBTYW5kaSDDqSDwn5iAICAifQ",
+  "request_id": "fixture-unicode",
+  "timestamp": "1792116000000",
+  "nonce": "abababababababababababababababababababababababababababababababab",
+  "signature": "285613e64c80d89b754de695de0c447d009a4edda86e732529255acba4a6e030"
+}
