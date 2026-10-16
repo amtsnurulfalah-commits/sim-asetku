@@ -1,5 +1,5 @@
 "use client";
-import { csrf } from "@/features/assets/client";
+import { csrf } from "@/features/auth/csrf-client";
 export async function depreciationApi<T>(path: string, tenant: string, body?: unknown, signal?: AbortSignal): Promise<T> {
     let r: Response;
     try {

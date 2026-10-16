@@ -29,9 +29,7 @@ export function ReportsPanel({ tenantId, tenantName }: {
     useEffect(() => { const c = new AbortController(); reportApi<Options>('options', tenantId, undefined, c.signal).then(setO).catch(e => { if (!c.signal.aborted)
         setError(e.message); }); return () => c.abort(); }, [tenantId, tick]);
     useEffect(() => { if (f.kind !== 'minutes')
-        return; const c = new AbortController(); reportApi<Table & {
-        hasMore: boolean;
-    }>('preview', tenantId, { filters: { ...filters.parse({ period: f.period }), kind: 'transactions', query: sourceQuery }, page: sourcePage }, c.signal).then(t => { setDocuments(t.rows.filter(r => r.rawType?.startsWith('asset:') || r.rawType === 'supply:receipt').map(r => ({ id: r.id!, code: r.code, type: r.type }))); setSourceMore(t.hasMore); }).catch(e => { if (!c.signal.aborted)
+        return; const c = new AbortController(); const load = async () => { const parsed = filters.safeParse({period:f.period}); if (!parsed.success) throw new Error('Pilih periode laporan yang valid.'); return reportApi<Table & {hasMore:boolean}>('preview', tenantId, { filters: { ...parsed.data, kind: 'transactions', query: sourceQuery }, page: sourcePage }, c.signal); }; load().then(t => { if (c.signal.aborted) return; setDocuments(t.rows.filter(r => r.rawType?.startsWith('asset:') || r.rawType === 'supply:receipt').map(r => ({ id: r.id!, code: r.code, type: r.type }))); setSourceMore(t.hasMore); }).catch(e => { if (!c.signal.aborted)
         setError(e.message); }); return () => c.abort(); }, [tenantId, sourceQuery, sourcePage, f.kind, f.period]);
     useEffect(() => { if (tab !== 'history')
         return; const c = new AbortController(); reportApi<{

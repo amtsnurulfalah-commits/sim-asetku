@@ -1,5 +1,5 @@
 "use client";
-import { csrf } from "@/features/assets/client";
+import { csrf } from "@/features/auth/csrf-client";
 export async function supplyApi<T>(
   path: string,
   tenant: string,

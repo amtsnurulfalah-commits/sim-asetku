@@ -80,7 +80,7 @@ export async function reportPdf(t: Table, logo?: Uint8Array) {
                 header();
             }
             const available = Math.max(1, Math.floor((y - margin - 40 - 12) / 11)), take = Math.min(available, max - offset), h = take * 11 + 12;
-            t.columns.forEach((c, i) => { page.drawRectangle({ x: margin + i * colwidth, y: y - h, width: colwidth, height: h, borderColor: rgb(.8, .85, .85), borderWidth: .4 }); ls[i].slice(offset, offset + take).forEach((s, j) => page.drawText(s, { x: margin + i * colwidth + padding, y: y - 12 - j * 11, size, font, color: rgb(.12, .18, .24) })); });
+            t.columns.forEach((_, i) => { page.drawRectangle({ x: margin + i * colwidth, y: y - h, width: colwidth, height: h, borderColor: rgb(.8, .85, .85), borderWidth: .4 }); ls[i].slice(offset, offset + take).forEach((s, j) => page.drawText(s, { x: margin + i * colwidth + padding, y: y - 12 - j * 11, size, font, color: rgb(.12, .18, .24) })); });
             y -= h;
             offset += take;
             if (offset < max) {

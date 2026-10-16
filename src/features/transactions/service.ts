@@ -11,7 +11,7 @@ import { parseScan } from '@/features/assets/qr';
 export function mapTransactionError(e: unknown) {
     if (e instanceof AppError)
         return e;
-    const { code, message = '' } = e as {
+    const { code, message = '' } = (e ?? {}) as {
         code?: string;
         message?: string;
     };

@@ -1,4 +1,5 @@
 "use client";
+import { csrf } from "./csrf-client";
 async function safeJson(r: Response) {
   try {
     return await r.json();
@@ -16,20 +17,12 @@ export async function authPost(
   body: unknown = {},
   tenantId?: string,
 ): Promise<Result> {
-  const csrfResponse = await fetch("/api/auth/csrf", {
-    cache: "no-store",
-    credentials: "same-origin",
-  });
-  const csrf = await safeJson(csrfResponse);
-  if (!csrfResponse.ok || !csrf.success || typeof csrf.token !== "string")
-    throw new Error(
-      csrf.error?.message ?? "Halaman belum dapat diproses. Coba kembali.",
-    );
+  const csrfToken = await csrf();
   const r = await fetch(path, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-CSRF-Token": csrf.token,
+      "X-CSRF-Token": csrfToken,
       ...(tenantId ? { "X-Tenant-Context": tenantId } : {}),
     },
     body: JSON.stringify(body),

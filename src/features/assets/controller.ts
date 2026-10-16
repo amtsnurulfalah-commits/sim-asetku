@@ -73,10 +73,12 @@ export class AssetController {
         );
       else if (action === "files") data = await this.service.files(token);
       else if (action === "resolve") {
-        const scan = parseScan(
-          url.searchParams.get("value") ?? "",
-          this.origin,
-        );
+        let scan: ReturnType<typeof parseScan>;
+        try {
+          scan = parseScan(url.searchParams.get("value") ?? "", this.origin);
+        } catch {
+          throw new AppError("SCAN_INVALID", 400, "Kode QR tidak valid atau bukan milik aplikasi ini.");
+        }
         if (scan.publicId) {
           const d = await this.service.detail(token, scan.publicId, true);
           data = { path: "/aset/qr/" + d.asset.public_id };

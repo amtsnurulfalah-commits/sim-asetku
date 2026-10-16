@@ -42,7 +42,8 @@ export class AuthController {
             403,
             "Permintaan tidak diizinkan.",
           );
-        const token = H.newCsrf();
+        const existing = H.cookieValue(request, n.csrf);
+        const token = existing && /^[0-9a-f]{64}$/.test(existing) ? existing : H.newCsrf();
         const response = H.json({ success: true, token });
         response.headers.append(
           "Set-Cookie",

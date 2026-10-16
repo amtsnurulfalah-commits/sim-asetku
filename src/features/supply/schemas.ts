@@ -142,7 +142,6 @@ export const document = z.discriminatedUnion("kind", [
     .strict(),
 ]);
 export type Kind = z.infer<typeof kindSchema>;
-export type SupplyDocument = z.infer<typeof document>;
 export type Ref = {
   id: string;
   name: string;

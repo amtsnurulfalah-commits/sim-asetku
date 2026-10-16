@@ -1,12 +1,6 @@
 "use client";
 import SparkMD5 from "spark-md5";
-export async function csrf() {
-  const r = await fetch("/api/auth/csrf", { cache: "no-store" }),
-    b = await r.json();
-  if (!r.ok || !b.success)
-    throw new Error("Muat ulang halaman sebelum melanjutkan.");
-  return b.token as string;
-}
+import { csrf } from "@/features/auth/csrf-client";
 export async function api<T>(
   path: string,
   tenant: string,

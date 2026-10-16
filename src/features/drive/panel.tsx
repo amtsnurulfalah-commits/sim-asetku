@@ -18,13 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import type { DriveData } from "./service";
 const CHUNK = 1048576;
-async function csrf() {
-  const r = await fetch("/api/auth/csrf", { cache: "no-store" });
-  const x = await r.json();
-  if (!r.ok || !x.success)
-    throw new Error("Muat ulang halaman sebelum melanjutkan.");
-  return x.token as string;
-}
+import { csrf } from "@/features/auth/csrf-client";
 async function post<T>(path: string, tenant: string, body: unknown) {
   const r = await fetch("/api/drive/" + path, {
     method: "POST",

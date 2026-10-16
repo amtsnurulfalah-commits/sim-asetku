@@ -59,6 +59,7 @@ type Upload = {
   connection_id: string;
   checksum: string | null;
   expires_at: string;
+  file_status: string;
 };
 export type DriveData = {
   connections: Omit<Connection, "token_ciphertext" | "encryption_key_id">[];
@@ -171,6 +172,7 @@ export class DriveService {
       filesOnly ? "files.download" : "settings.manage",
       false,
     );
+    const permissions = await this.auth.repo.permissions(x);
     return this.run(x, token, async (q) => ({
       tenantId: x.session.active_tenant_id!,
       maxBytes: this.c.maxBytes,
@@ -184,7 +186,8 @@ export class DriveService {
           ).rows,
       files: (
         await q.query<DriveData["files"][number]>(
-          "SELECT id,original_filename,mime_type,file_size,status,sensitivity,created_at FROM inventory.file_attachments ORDER BY created_at DESC LIMIT 100",
+          "SELECT id,original_filename,mime_type,file_size,status,sensitivity,created_at FROM inventory.file_attachments WHERE sensitivity='normal' OR $1 ORDER BY created_at DESC LIMIT 100",
+          [permissions.includes("files.sensitive.download")],
         )
       ).rows,
     }));
@@ -595,11 +598,11 @@ export class DriveService {
   private async upload(x: Snapshot, t: string | undefined, id: string) {
     const r = await this.run(x, t, (q) =>
       q.query<Upload>(
-        `SELECT o.*,f.google_file_id,f.original_filename,f.mime_type,f.connection_id,f.checksum,d.google_folder_id folder_google_id FROM inventory.file_upload_operations o JOIN inventory.file_attachments f ON f.tenant_id=o.tenant_id AND f.id=o.file_id JOIN inventory.tenant_drive_folders d ON d.tenant_id=f.tenant_id AND d.id=f.folder_id WHERE o.id=$1 AND o.actor_id=$2`,
+        `SELECT o.*,f.status file_status,f.google_file_id,f.original_filename,f.mime_type,f.connection_id,f.checksum,d.google_folder_id folder_google_id FROM inventory.file_upload_operations o JOIN inventory.file_attachments f ON f.tenant_id=o.tenant_id AND f.id=o.file_id JOIN inventory.tenant_drive_folders d ON d.tenant_id=f.tenant_id AND d.id=f.folder_id WHERE o.id=$1 AND o.actor_id=$2`,
         [id, x.session.active_membership_id],
       ),
     );
-    if (!r.rows[0]) fail("FILE_NOT_FOUND", 404);
+    if (!r.rows[0] || r.rows[0].file_status === "archived") fail("FILE_NOT_FOUND", 404);
     return r.rows[0];
   }
   async chunk(
@@ -707,10 +710,11 @@ export class DriveService {
     )
       fail("DRIVE_VERIFICATION_FAILED", 409);
     await this.run(x, token, async (q) => {
-      await q.query(
-        "UPDATE inventory.file_attachments SET status='ready',checksum=$2 WHERE id=$1",
+      const updated = await q.query(
+        "UPDATE inventory.file_attachments SET status='ready',checksum=$2 WHERE id=$1 AND status<>'archived' RETURNING id",
         [o.file_id, md5],
       );
+      if (!updated.rows.length) fail("FILE_NOT_FOUND", 404);
       await q.query(
         "UPDATE inventory.file_upload_operations SET status='ready',resumable_uri_ciphertext=NULL,encryption_key_id=NULL WHERE id=$1",
         [o.id],
