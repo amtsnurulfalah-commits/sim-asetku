@@ -1,0 +1,18 @@
+import {z} from 'zod';
+const id=z.string().uuid();export const version=z.string().regex(/^[1-9]\d{0,17}$/);export const moneyValue=z.string().regex(/^\d{1,18}(\.\d{1,2})?$/);
+export const month=z.string().regex(/^\d{4}-(0[1-9]|1[0-2])-01$/).refine(v=>v>='1900-01-01');
+const reason=z.string().trim().min(3).max(2000);
+const normal=z.object({mode:z.literal('normal'),period:month,reason,roomId:id.nullable().default(null),categoryId:id.nullable().default(null),assetIds:z.array(id).max(200).default([])}).strict().refine(x=>new Set(x.assetIds).size===x.assetIds.length,'Aset duplikat');
+const correction=z.object({mode:z.literal('correction'),period:month.nullable().default(null),reason,corrections:z.array(z.object({entryId:id,targetAccumulated:moneyValue,remainingMonths:z.number().int().min(0).max(1200)}).strict()).min(1).max(50)}).strict().refine(x=>new Set(x.corrections.map(l=>l.entryId)).size===x.corrections.length,'Koreksi duplikat');
+export const input=z.discriminatedUnion('mode',[normal,correction]);export type Input=z.infer<typeof input>;
+export const save=z.object({id:id.nullable().default(null),version:version.nullable().default(null),key:id,data:input}).strict().refine(x=>!x.id||!!x.version,'Versi dokumen diperlukan');
+export type Ref={id:string;code:string;name:string};
+export type Options={permissions:string[];rooms:Ref[];categories:Ref[];policies:(Ref&{method:string;proration:string;useful_life_months:number;version:number;status:string})[]};
+export type Plan={assetId:string;code:string;name:string;room?:string;period:string;status:'ready'|'excluded';reason:string|null;amount:string;cost:string;residual:string;prior:string;target:string;bookBefore:string;bookAfter:string;convention:string|null;correctionOf?:string;remainingMonths?:number};
+export type Preview={period:string;mode:'normal'|'correction';lines:Plan[];total:string;ready:number};
+export type Run={id:string;run_id:string;document_number:string;business_date:string;period:string;status:string;revision:number;row_version:string;requested_by:string;review_mode_snapshot:string|null;mode:'normal'|'correction';input_snapshot:Input;total:string;ready:string};
+export type Detail={run:Run;lines:{id:string;asset_id:string;status:string;amount:string;plan:Plan}[];events:{id:string;action:string;reason:string;actor_name:string;created_at:string}[]};
+export type LedgerRow={id:string;asset_id:string;inventory_code:string;name:string;period:string;amount:string;book_value_after:string;correction_of:string|null;reason:string;created_at:string;document_id:string|null;document_number:string;posting_sequence:string};
+export type ValuationRow={id:string;inventory_code:string;name:string;room_name:string|null;category_name:string;acquisition_cost:string;residual_value:string;before:string;expense:string;accumulated:string;book_value:string};
+export const exclusions:Record<string,string>={nondepreciable:'Tanah, persediaan atau kategori tidak disusutkan',inactive_asset:'Aset belum aktif / sudah dihapus atau diarsipkan',construction_in_progress:'Bangunan masih dalam pengerjaan',missing_policy:'Kebijakan atau umur manfaat belum lengkap',missing_start:'Tanggal mulai penyusutan belum diisi',not_started:'Belum masuk periode penyusutan',already_posted:'Periode ini sudah diposting',later_period_exists:'Ada periode berikutnya yang sudah diposting',fully_depreciated:'Nilai sudah mencapai residu',revised_period:'Periode sudah ditutup dengan koreksi',over_schedule:'Akumulasi melebihi jadwal; perlu peninjauan/koreksi'};
+export const conventions:Record<string,string>={full_month:'Satu bulan penuh sejak bulan mulai',next_month:'Mulai bulan berikutnya',daily:'Prorata hari aktual',prospective_full_month:'Jadwal bulanan prospektif setelah koreksi'};
