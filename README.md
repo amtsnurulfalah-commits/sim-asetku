@@ -1,4 +1,6 @@
-# Inventaris Madrasah/Sekolah — 0.14.1
+# Inventaris Madrasah/Sekolah — 0.14.2
+
+Perbaikan build Vercel: [catatan 0.14.2](docs/Perbaikan-Build-Vercel-0.14.2.md). Build memakai npm run build; validasi konfigurasi runtime tetap tersedia sebagai pemeriksaan terpisah sebelum aktivasi layanan.
 
 Rilis audit/perbaikan: [laporan temuan dan bukti penghapusan](docs/audit/Laporan-Audit.md). Sembilan kelompok bug diperbaiki, 320 tes aplikasi lulus; penerimaan produksi tetap terbuka. Dokumentasi Tahap 14 di bawah adalah baseline 0.14.0, dengan manifest aktif diperbarui untuk perbaikan ini.
 
@@ -45,7 +47,7 @@ Isi .env.local melalui mekanisme lokal yang aman sebelum menguji login/fitur bis
 | npm run deploy:check-db | Probe read-only TLS/role/schema ke target yang dikonfigurasi |
 | npm run operator:bootstrap -- --username=USERNAME --days=30 | Bootstrap operator administratif, memerlukan SSO dan MIGRATION_DATABASE_URL |
 
-Script Node standalone tidak otomatis membaca .env.local. Untuk pemeriksaan runtime gunakan opsi Node --env-file sesuai runbook; jangan memasukkan kredensial migrasi ke environment runtime Vercel. Build Vercel menjalankan preflight terlebih dahulu. Workflow GitHub hanya memverifikasi kode; tidak melakukan deployment/migrasi otomatis.
+Script Node standalone tidak otomatis membaca .env.local. Untuk pemeriksaan runtime gunakan opsi Node --env-file sesuai runbook; jangan memasukkan kredensial migrasi ke environment runtime Vercel. Build Vercel hanya mengompilasi aplikasi. Jalankan deploy:check-env terpisah untuk kesiapan runtime sebelum aktivasi; konfigurasi runtime yang tidak valid tetap ditolak saat endpoint diakses. Workflow GitHub hanya memverifikasi kode; tidak melakukan deployment/migrasi otomatis.
 
 ## Hasil dan batas verifikasi
 
